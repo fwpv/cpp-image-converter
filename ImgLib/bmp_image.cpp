@@ -40,7 +40,6 @@ static int GetBMPStride(int w) {
 
 constexpr uint16_t SIGNATURE = static_cast<uint16_t>('B') | static_cast<uint16_t>('M') << 8;
 
-// напишите эту функцию
 bool SaveBMP(const Path& file, const Image& image) {
     ofstream out(file, ios::binary);
 
@@ -89,7 +88,6 @@ bool SaveBMP(const Path& file, const Image& image) {
     return out.good();
 }
 
-// напишите эту функцию
 Image LoadBMP(const Path& file) {
     ifstream ifs(file, ios::binary);
 
