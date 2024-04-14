@@ -17,7 +17,10 @@ struct Color {
         return {std::byte{0}, std::byte{0}, std::byte{0}, std::byte{255}};
     }
 
-    std::byte r, g, b, a;
+    std::byte r;
+    std::byte g;
+    std::byte b;
+    std::byte a;
 };
 
 class Image {

@@ -11,7 +11,8 @@ using namespace std;
 namespace img_lib {
 
 PACKED_STRUCT_BEGIN BitmapFileHeader {
-    uint16_t signature;
+    uint8_t signature_0;
+    uint8_t signature_1;
     uint32_t total_size;
     uint32_t reserve;
     uint32_t indentation;
@@ -38,8 +39,6 @@ static int GetBMPStride(int w) {
     return 4 * ((w * 3 + 3) / 4);
 }
 
-constexpr uint16_t SIGNATURE = static_cast<uint16_t>('B') | static_cast<uint16_t>('M') << 8;
-
 bool SaveBMP(const Path& file, const Image& image) {
     ofstream out(file, ios::binary);
 
@@ -48,7 +47,8 @@ bool SaveBMP(const Path& file, const Image& image) {
     int stride = GetBMPStride(w);
 
     BitmapFileHeader file_header;
-    file_header.signature = SIGNATURE;
+    file_header.signature_0 = 'B';
+    file_header.signature_1 = 'M';
     file_header.total_size = sizeof(BitmapFileHeader) + sizeof(BitmapInfoHeader) + stride * h;
     file_header.reserve = 0;
     file_header.indentation = sizeof(BitmapFileHeader) + sizeof(BitmapInfoHeader);
@@ -96,7 +96,8 @@ Image LoadBMP(const Path& file) {
     ifs.read(reinterpret_cast<char*>(&file_header), sizeof(BitmapFileHeader));
 
     // Проверить подпись
-    if (file_header.signature != SIGNATURE) {
+    if (file_header.signature_0 != 'B'
+        || file_header.signature_1 != 'M') {
         return {};
     }
 
@@ -105,7 +106,9 @@ Image LoadBMP(const Path& file) {
     ifs.read(reinterpret_cast<char*>(&info_header), sizeof(BitmapInfoHeader));
 
     // Поддерживается только формат с 24 цветами на пиксель, без сжатия
-    if (info_header.planes != 1 || info_header.bpp != 24 || info_header.compression_type != 0) {
+    if (info_header.planes != 1
+        || info_header.bpp != 24
+        || info_header.compression_type != 0) {
         return {};
     }
 
@@ -113,12 +116,12 @@ Image LoadBMP(const Path& file) {
     int h = info_header.height;
     int stride = GetBMPStride(w);
 
-    Image result(w, h, Color::Black());
+    Image iamge(w, h, Color::Black());
     std::vector<char> buff(stride);
 
     // Прочитать данные
     for (int y = h - 1; y >= 0; --y) {
-        Color* line = result.GetLine(y);
+        Color* line = iamge.GetLine(y);
         ifs.read(buff.data(), buff.size());
 
         for (int x = 0; x < w; ++x) {
@@ -128,6 +131,6 @@ Image LoadBMP(const Path& file) {
         }
     }
 
-    return result;
+    return iamge;
 }
 }  // namespace img_lib

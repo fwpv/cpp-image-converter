@@ -38,7 +38,9 @@ Image LoadPPM(const Path& file) {
     // поскольку будем читать данные в двоичном формате
     ifstream ifs(file, ios::binary);
     std::string sign;
-    int w, h, color_max;
+    int w;
+    int h;
+    int color_max;
 
     // читаем заголовок: он содержит формат, размеры изображения
     // и максимальное значение цвета
@@ -56,11 +58,11 @@ Image LoadPPM(const Path& file) {
         return {};
     }
 
-    Image result(w, h, Color::Black());
+    Image iamge(w, h, Color::Black());
     std::vector<char> buff(w * 3);
 
     for (int y = 0; y < h; ++y) {
-        Color* line = result.GetLine(y);
+        Color* line = iamge.GetLine(y);
         ifs.read(buff.data(), w * 3);
 
         for (int x = 0; x < w; ++x) {
@@ -70,7 +72,7 @@ Image LoadPPM(const Path& file) {
         }
     }
 
-    return result;
+    return iamge;
 }
 
 }  // namespace img_lib
