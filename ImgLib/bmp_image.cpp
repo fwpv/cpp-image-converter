@@ -11,8 +11,7 @@ using namespace std;
 namespace img_lib {
 
 PACKED_STRUCT_BEGIN BitmapFileHeader {
-    uint8_t signature_0; // 1 символ подписи
-    uint8_t signature_1; // 2 символ подписи
+    uint8_t signature[2]; // символы подписи
     uint32_t total_size;
     uint32_t reserve;
     uint32_t indentation;
@@ -47,8 +46,8 @@ bool SaveBMP(const Path& file, const Image& image) {
     int stride = GetBMPStride(w);
 
     BitmapFileHeader file_header;
-    file_header.signature_0 = 'B';
-    file_header.signature_1 = 'M';
+    file_header.signature[0] = 'B';
+    file_header.signature[1] = 'M';
     file_header.total_size = sizeof(BitmapFileHeader) + sizeof(BitmapInfoHeader) + stride * h;
     file_header.reserve = 0;
     file_header.indentation = sizeof(BitmapFileHeader) + sizeof(BitmapInfoHeader);
@@ -96,8 +95,8 @@ Image LoadBMP(const Path& file) {
     ifs.read(reinterpret_cast<char*>(&file_header), sizeof(BitmapFileHeader));
 
     // Проверить подпись
-    if (file_header.signature_0 != 'B'
-        || file_header.signature_1 != 'M') {
+    if (file_header.signature[0] != 'B'
+        || file_header.signature[1] != 'M') {
         return {};
     }
 
