@@ -11,8 +11,8 @@ using namespace std;
 namespace img_lib {
 
 PACKED_STRUCT_BEGIN BitmapFileHeader {
-    uint8_t signature_0;
-    uint8_t signature_1;
+    uint8_t signature_0; // 1 символ подписи
+    uint8_t signature_1; // 2 символ подписи
     uint32_t total_size;
     uint32_t reserve;
     uint32_t indentation;
